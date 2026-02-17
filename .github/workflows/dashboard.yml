@@ -39,4 +39,4 @@ jobs:
           restore-keys: data-hashes-
 
       - name: Run dashboard pipeline
-        run: python dashboard.py
+        run: python dashboard.py > /dev/null

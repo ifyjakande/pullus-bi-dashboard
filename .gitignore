@@ -1,0 +1,13 @@
+# Service account credentials
+pullus-pipeline-40a5302e034d.json
+*.json
+
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/

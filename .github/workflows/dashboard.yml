@@ -1,0 +1,42 @@
+name: Update Dashboard
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-dashboard:
+    runs-on: ubuntu-latest
+
+    env:
+      PURCHASE_SHEET_ID: ${{ secrets.PURCHASE_SHEET_ID }}
+      PURCHASE_TRACKER_SHEET_NAME: ${{ secrets.PURCHASE_TRACKER_SHEET_NAME }}
+      DASHBOARD_SHEET_ID: ${{ secrets.DASHBOARD_SHEET_ID }}
+      DOC_PRICE_SHEET_ID: ${{ secrets.DOC_PRICE_SHEET_ID }}
+      DOC_PRICE_SHEET_NAME: ${{ secrets.DOC_PRICE_SHEET_NAME }}
+      COMPETITOR_SELLING_PRICE_SHEET_ID: ${{ secrets.COMPETITOR_SELLING_PRICE_SHEET_ID }}
+      COMPETITOR_SELLING_PRICE_TABS: ${{ secrets.COMPETITOR_SELLING_PRICE_TABS }}
+      COMPETITOR_BUYING_PRICE_SHEET_ID: ${{ secrets.COMPETITOR_BUYING_PRICE_SHEET_ID }}
+      COMPETITOR_BUYING_PRICE_TAB: ${{ secrets.COMPETITOR_BUYING_PRICE_TAB }}
+      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Restore data hashes
+        uses: actions/cache@v4
+        with:
+          path: data_hashes.json
+          key: data-hashes-${{ github.run_id }}
+          restore-keys: data-hashes-
+
+      - name: Run dashboard pipeline
+        run: python dashboard.py

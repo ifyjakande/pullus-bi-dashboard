@@ -21,6 +21,9 @@ jobs:
       COMPETITOR_BUYING_PRICE_TAB: ${{ secrets.COMPETITOR_BUYING_PRICE_TAB }}
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
 
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,12 +34,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Restore data hashes
-        uses: actions/cache@v4
-        with:
-          path: data_hashes.json
-          key: data-hashes-${{ github.run_id }}
-          restore-keys: data-hashes-
-
       - name: Run dashboard pipeline
         run: python dashboard.py > /dev/null
+
+      - name: Save data hashes
+        run: |
+          git diff --quiet data_hashes.json 2>/dev/null && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data_hashes.json
+          git commit -m "Update data hashes [skip ci]"
+          git push

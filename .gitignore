@@ -1,6 +1,7 @@
 # Service account credentials
 pullus-pipeline-40a5302e034d.json
 *.json
+!data_hashes.json
 
 # Environment variables
 .env

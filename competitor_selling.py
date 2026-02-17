@@ -10,7 +10,7 @@ from helpers import (
     parse_date, safe_float,
     grid_range, cell_fmt, fmt_request, merge_request,
     col_width_request, row_height_request, border_request,
-    conditional_format_request, clear_sheet,
+    conditional_format_request, clear_sheet, get_or_create_sheet,
 )
 
 # Location display names (strip _Entry suffix)
@@ -214,22 +214,6 @@ def build_competitor_chart_request(sheet_id, data_count, table_start_row, axis_m
 
 
 # ---------- Dashboard Writing ----------
-def get_or_create_sheet(dash_sh, title, index=2):
-    for ws in dash_sh.worksheets():
-        if ws.title == title:
-            return ws
-    ws = dash_sh.add_worksheet(title=title, rows=500, cols=20)
-    dash_sh.batch_update({
-        "requests": [{
-            "updateSheetProperties": {
-                "properties": {"sheetId": ws.id, "index": index},
-                "fields": "index",
-            }
-        }]
-    })
-    return ws
-
-
 def build_dashboard(dash_sh, aggregated):
     ws = get_or_create_sheet(dash_sh, "Competitor Selling Prices", index=2)
     sid = ws.id

@@ -158,6 +158,23 @@ def conditional_format_request(sheet_id, r1, r2, c1, c2, positive_color, negativ
     return requests
 
 
+def get_or_create_sheet(dash_sh, title, index=1):
+    """Get existing sheet by title or create a new one."""
+    for ws in dash_sh.worksheets():
+        if ws.title == title:
+            return ws
+    ws = dash_sh.add_worksheet(title=title, rows=500, cols=20)
+    dash_sh.batch_update({
+        "requests": [{
+            "updateSheetProperties": {
+                "properties": {"sheetId": ws.id, "index": index},
+                "fields": "index",
+            }
+        }]
+    })
+    return ws
+
+
 def clear_sheet(dash_sh, ws, sid):
     """Clear all values, merges, formatting, charts, and conditional formats from a sheet."""
     max_rows = ws.row_count

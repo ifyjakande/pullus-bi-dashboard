@@ -10,7 +10,7 @@ from helpers import (
     parse_date, safe_float,
     grid_range, cell_fmt, fmt_request, merge_request,
     col_width_request, row_height_request, border_request,
-    conditional_format_request, clear_sheet,
+    conditional_format_request, clear_sheet, get_or_create_sheet,
 )
 
 
@@ -21,9 +21,8 @@ def fetch_price_data(client):
     rows = ws.get_all_values()
     header = rows[0]
     data = rows[1:]
-    suppliers = header[1:]
-    print(f"  Fetched {len(data)} price entries, {len(suppliers)} suppliers")
-    return data, suppliers
+    print(f"  Fetched {len(data)} price entries, {len(header) - 1} suppliers")
+    return data
 
 
 def aggregate_weekly_prices(data):
@@ -202,24 +201,6 @@ def build_price_chart_request(sheet_id, weeks_count, table_start_row, axis_min=0
 
 
 # ---------- Dashboard Writing ----------
-def get_or_create_sheet(dash_sh, title, index=1):
-    """Get existing sheet by title or create a new one."""
-    for ws in dash_sh.worksheets():
-        if ws.title == title:
-            return ws
-    ws = dash_sh.add_worksheet(title=title, rows=500, cols=20)
-    # Move to desired position
-    dash_sh.batch_update({
-        "requests": [{
-            "updateSheetProperties": {
-                "properties": {"sheetId": ws.id, "index": index},
-                "fields": "index",
-            }
-        }]
-    })
-    return ws
-
-
 def build_dashboard(dash_sh, weeks):
     ws = get_or_create_sheet(dash_sh, "DOC Price Trends", index=1)
     sid = ws.id

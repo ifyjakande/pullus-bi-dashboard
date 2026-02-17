@@ -84,7 +84,7 @@ def main():
     # --- Sheet 2: DOC Price Trends ---
     print("\n[DOC Price Trends]")
     print("  Fetching price data...")
-    price_data, _ = fetch_price_data(client)
+    price_data = fetch_price_data(client)
     if data_changed("doc_price", price_data, prev_hashes, new_hashes):
         print("  Aggregating weekly prices...")
         price_weeks = aggregate_weekly_prices(price_data)

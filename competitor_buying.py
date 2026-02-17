@@ -9,7 +9,7 @@ from helpers import (
     parse_date, safe_float,
     grid_range, cell_fmt, fmt_request, merge_request,
     col_width_request, row_height_request, border_request,
-    conditional_format_request, clear_sheet,
+    conditional_format_request, clear_sheet, get_or_create_sheet,
 )
 
 
@@ -191,22 +191,6 @@ def build_buying_chart_request(sheet_id, dressed_count, table_start_row, axis_mi
 
 
 # ---------- Dashboard Writing ----------
-def get_or_create_sheet(dash_sh, title, index=3):
-    for ws in dash_sh.worksheets():
-        if ws.title == title:
-            return ws
-    ws = dash_sh.add_worksheet(title=title, rows=500, cols=20)
-    dash_sh.batch_update({
-        "requests": [{
-            "updateSheetProperties": {
-                "properties": {"sheetId": ws.id, "index": index},
-                "fields": "index",
-            }
-        }]
-    })
-    return ws
-
-
 def build_dashboard(dash_sh, records):
     ws = get_or_create_sheet(dash_sh, "Competitor Buying Prices", index=3)
     sid = ws.id
